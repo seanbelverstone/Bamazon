@@ -22,7 +22,7 @@ connection.connect(function(err) {
 });
 
 function start() {
-    console.log("Welcome to \n ========== \n Bamazon \n ========== \n");
+    console.log("Welcome to \n=============\n Bamazon \n=============\n");
     displayItems();
 }
 
@@ -30,9 +30,20 @@ function displayItems() {
     connection.query("SELECT * FROM products", function(err, results) {
         if (err) throw err;
         console.log("\nCurrent items in stock: \n")
-        results.forEach {
-            //For each to loop through the database array and print out in a nice, readable format
-
+        for (var i = 0; i < results.length; i++) {
+            console.log("\n======================\n");
+            console.log("Item " + results[i].item_id + ". " + results[i].product_name);
+            console.log("Price: " + results[i].price);
+            console.log("Number in Stock: " + results[i].stock_quantity);
         }
+        inquirer.prompt ([
+
+            {
+                name: "selectID",
+                type: "list",
+                
+            }
+
+        ])
     });
 }
