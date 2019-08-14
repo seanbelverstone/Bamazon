@@ -64,6 +64,30 @@ function firstQuestion(results) {
         var itemIndex = (response.selectID) -1;
         console.log("\nYou have selected item " + results[itemIndex].item_id + ": " + results[itemIndex].product_name);
         console.log("\nPrice: $" + results[itemIndex].price);
-        secondQuestion();
-    })
+        secondQuestion(results, itemIndex);
+    });
+}
+
+function secondQuestion(results, itemIndex) {
+    inquirer.prompt([
+
+        {
+            name: "quantityQuery",
+            type: "input",
+            message: "How many units would you like to buy?",
+            validate: function(value) {
+                var valid = parseFloat(value);
+                if (isNaN(valid)) {
+                    return "Please enter a number";
+                }
+                if (valid > results[itemIndex].stock_quantity) {
+                    return ("Oops! Looks like that's more than we have. Current stock: " + results[itemIndex].stock_quantity);
+                }
+                return true;
+            }
+        }
+
+    ]).then(function(secondResponse) {
+        console.log("Items purchased!");
+    });
 }
