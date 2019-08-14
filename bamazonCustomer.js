@@ -31,6 +31,7 @@ function displayItems() {
     connection.query("SELECT * FROM products", function(err, results) {
         if (err) throw err;
         console.log("\nCurrent items in stock: \n")
+        //Displays all the items in a nice format
         for (var i = 0; i < results.length; i++) {
             console.log("\n======================\n");
             console.log("Item " + results[i].item_id + ". " + results[i].product_name);
@@ -48,6 +49,7 @@ function firstQuestion(results) {
             name: "selectID",
             type: "input",
             message: "Please type the ID of the number you wish to purchase:",
+            //Checks that if the input is not a number, it'll return the message. If not it continues.
             validate: function(value) {
                 var valid = isNaN(parseFloat(value));
                 if (valid === true) {
@@ -62,5 +64,6 @@ function firstQuestion(results) {
         var itemIndex = (response.selectID) -1;
         console.log("\nYou have selected item " + results[itemIndex].item_id + ": " + results[itemIndex].product_name);
         console.log("\nPrice: $" + results[itemIndex].price);
+        secondQuestion();
     })
 }
