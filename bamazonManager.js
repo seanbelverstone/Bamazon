@@ -54,6 +54,23 @@ function initialList() {
             choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
         }
     ]).then(function(response) {
-        console.log(response.choices);
+        switch (response) {
+
+            case "View Products for Sale":
+                viewProducts();
+                break;
+
+            case "View Low Inventory":
+                viewLowInventory();
+                break;
+
+            case "Add to Inventory":
+                addInventory();
+                break;
+
+            case "Add New Product":
+                addNewProduct();
+                break;
+        }
     })
 }
