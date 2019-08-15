@@ -1,6 +1,5 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var results = [];
 
 var connection = mysql.createConnection({
 
@@ -23,12 +22,14 @@ connection.connect(function(err) {
     displayItems();
 });
 
+// DISPLAYING THE TABLE/ITEMS
 
 function displayItems() {
     connection.query("SELECT * FROM products", function(err, results) {
         if (err) throw err;
         console.log("\nCurrent items in stock: \n")
-        //Displays all the items in a nice format
+
+        //Displays all the items in a nice format, using a for loop
         for (var i = 0; i < results.length; i++) {
             console.log("\n======================\n");
             console.log("Item " + results[i].item_id + ". " + results[i].product_name);
@@ -38,6 +39,8 @@ function displayItems() {
     firstQuestion(results);
     });
 }
+
+// FIRST QUESTION FUNCTION
 
 function firstQuestion(results) {
     inquirer.prompt ([
@@ -59,12 +62,21 @@ function firstQuestion(results) {
     ]).then(function(response) {
         //This stores the user input into a variable, and then minuses 1 so it can translate to array positions
         var itemIndex = (response.selectID) -1;
-        console.log("\nYou have selected item " + results[itemIndex].item_id + ": " + results[itemIndex].product_name);
-        console.log("\nPrice: $" + results[itemIndex].price);
-        console.log("\nCurrent Stock: " + results[itemIndex].stock_quantity);
-        secondQuestion(results, itemIndex);
+
+        //If the user selects 0 as an option, it'll offer them the chance to exit
+        if (itemIndex <= 0) {
+            console.log("\nHmm. Looks like we don't have that item.\n")
+            userContinue();
+        } else {
+            console.log("\nYou have selected item " + results[itemIndex].item_id + ": " + results[itemIndex].product_name);
+            console.log("\nPrice: $" + results[itemIndex].price);
+            console.log("\nCurrent Stock: " + results[itemIndex].stock_quantity);
+            secondQuestion(results, itemIndex);
+        }
     });
 }
+
+// SECOND QUESTION FUNCTION
 
 function secondQuestion(results, itemIndex) {
     inquirer.prompt([
@@ -73,6 +85,7 @@ function secondQuestion(results, itemIndex) {
             name: "quantityQuery",
             type: "input",
             message: "How many units would you like to buy?",
+            //Another validation rule. This checks that the number is a number and also if the stock level is available
             validate: function(value) {
                 var units = parseInt(value);
                 if (isNaN(units)) {
@@ -85,11 +98,17 @@ function secondQuestion(results, itemIndex) {
         }
 
     ]).then(function(secondResponse) {
-        console.log("Items purchased!");
+        console.log("\n*==========================*")
+        console.log("      Items purchased!");
+        console.log("*==========================*\n")
+        
         //Sets the remaining stock to equal the current stock minus the user's input
         var remainingStock = parseInt(results[itemIndex].stock_quantity) -  parseInt(secondResponse.quantityQuery);
-        //Lets the user know how much is left afterwards
-        console.log("Remaining stock after purchase: " + remainingStock);
+        var totalCost = parseFloat(results[itemIndex].price) * parseInt(secondResponse.quantityQuery);
+
+        //Lets the user know how much is left afterwards, and also how much it cost overall
+        console.log("Remaining stock after purchase: " + remainingStock + "\n");
+        console.log("Total cost: $" + totalCost + "\n");
 
         //Updating the database
         connection.query(
@@ -105,5 +124,35 @@ function secondQuestion(results, itemIndex) {
         
         userContinue();
 
-        });
-    }
+    });
+}
+
+// CONTINUE FUNCTION
+
+function userContinue() {
+    //Asking the user if they'd like to continue or quit
+    inquirer.prompt([
+        {
+            name: "continue",
+            type: "list",
+            message: "\nWould you like to purchase another item?",
+            choices: ["Yes", "No"]
+        }
+    ]).then(function(continueResponse) {
+        //Switch case to evaluate whether the user said yes or no
+        switch (continueResponse.continue) {
+
+            case "Yes":
+                displayItems();
+                break;
+
+            case "No":
+                console.log("\n====================================\n");
+                console.log("Thank you for shopping with Bamazon.");
+                console.log("\n====================================\n");
+                console.log("We hope to see you soon!\n");
+                connection.end();
+                break;
+        }
+    });
+}
