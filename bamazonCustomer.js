@@ -22,6 +22,7 @@ connection.connect(function(err) {
     displayItems();
 });
 
+// DISPLAYING THE TABLE/ITEMS
 
 function displayItems() {
     connection.query("SELECT * FROM products", function(err, results) {
@@ -38,6 +39,8 @@ function displayItems() {
     firstQuestion(results);
     });
 }
+
+// FIRST QUESTION FUNCTION
 
 function firstQuestion(results) {
     inquirer.prompt ([
@@ -72,6 +75,8 @@ function firstQuestion(results) {
         }
     });
 }
+
+// SECOND QUESTION FUNCTION
 
 function secondQuestion(results, itemIndex) {
     inquirer.prompt([
@@ -122,6 +127,7 @@ function secondQuestion(results, itemIndex) {
     });
 }
 
+// CONTINUE FUNCTION
 
 function userContinue() {
     //Asking the user if they'd like to continue or quit
