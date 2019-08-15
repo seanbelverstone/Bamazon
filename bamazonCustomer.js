@@ -114,6 +114,7 @@ function secondQuestion(results, itemIndex) {
 
 
 function userContinue() {
+    //Asking the user if they'd like to continue or quit
     inquirer.prompt([
         {
             name: "continue",
@@ -122,7 +123,18 @@ function userContinue() {
             choices: ["Yes", "No"]
         }
     ]).then(function(continueResponse) {
-        console.log(continueResponse.continue);
-        connection.end();
+        //Switch case to evaluate whether the user said yes or no
+        switch (continueResponse.continue) {
+
+            case "Yes":
+                displayItems();
+                break;
+
+            case "No":
+                console.log("\nThank you for shopping with Bamazon.");
+                console.log("\nWe hope to see you soon!\n");
+                connection.end();
+                break;
+        }
     });
 }
