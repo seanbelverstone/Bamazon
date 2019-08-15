@@ -1,6 +1,5 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var results = [];
 
 var connection = mysql.createConnection({
 
@@ -28,7 +27,8 @@ function displayItems() {
     connection.query("SELECT * FROM products", function(err, results) {
         if (err) throw err;
         console.log("\nCurrent items in stock: \n")
-        //Displays all the items in a nice format
+
+        //Displays all the items in a nice format, using a for loop
         for (var i = 0; i < results.length; i++) {
             console.log("\n======================\n");
             console.log("Item " + results[i].item_id + ". " + results[i].product_name);
@@ -73,6 +73,7 @@ function secondQuestion(results, itemIndex) {
             name: "quantityQuery",
             type: "input",
             message: "How many units would you like to buy?",
+            //Another validation rule. This checks that the number is a number and also if the stock level is available
             validate: function(value) {
                 var units = parseInt(value);
                 if (isNaN(units)) {
@@ -86,14 +87,16 @@ function secondQuestion(results, itemIndex) {
 
     ]).then(function(secondResponse) {
         console.log("\n*==========================*")
-        console.log("       Items purchased!");
+        console.log("      Items purchased!");
         console.log("*==========================*\n")
         
         //Sets the remaining stock to equal the current stock minus the user's input
         var remainingStock = parseInt(results[itemIndex].stock_quantity) -  parseInt(secondResponse.quantityQuery);
-       
-        //Lets the user know how much is left afterwards
+        var totalCost = parseFloat(results[itemIndex].price) * parseInt(secondResponse.quantityQuery);
+
+        //Lets the user know how much is left afterwards, and also how much it cost overall
         console.log("Remaining stock after purchase: " + remainingStock + "\n");
+        console.log("Total cost: $" + totalCost + "\n");
 
         //Updating the database
         connection.query(
@@ -131,8 +134,10 @@ function userContinue() {
                 break;
 
             case "No":
-                console.log("\nThank you for shopping with Bamazon.");
-                console.log("\nWe hope to see you soon!\n");
+                console.log("\n====================================\n");
+                console.log("Thank you for shopping with Bamazon.");
+                console.log("\n====================================\n");
+                console.log("We hope to see you soon!\n");
                 connection.end();
                 break;
         }
