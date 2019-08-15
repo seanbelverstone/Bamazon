@@ -86,7 +86,24 @@ function secondQuestion(results, itemIndex) {
 
     ]).then(function(secondResponse) {
         console.log("Items purchased!");
-        var currentStock = parseInt(results[itemIndex].stock_quantity) -  secondResponse.quantityQuery;
-        console.log("Current stock: " + parseInt(results[itemIndex].stock_quantity) + "\nUnits purchased: " + secondResponse.quantityQuery);
-    });
-}
+        //Sets the remaining stock to equal the current stock minus the user's input
+        var remainingStock = parseInt(results[itemIndex].stock_quantity) -  parseInt(secondResponse.quantityQuery);
+        //Lets the user know how much is left afterwards
+        console.log("Remaining stock after purchase: " + remainingStock);
+
+        //Updating the database
+        connection.query(
+            "UPDATE products SET stock_quantity = ? WHERE item_id = ?",
+            [
+                remainingStock,
+                results[itemIndex].item_id
+            ],
+            function(error) {
+                if (error) throw err;
+            }
+        );
+        
+        userContinue();
+
+        });
+    }
