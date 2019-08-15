@@ -51,7 +51,7 @@ function initialList() {
             name: "choices",
             type: "list",
             message: "\nMain Menu\nWhat would you like to do?",
-            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
+            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "Quit"]
         }
     ]).then(function(response) {
         switch (response.choices) {
@@ -71,6 +71,10 @@ function initialList() {
             case "Add New Product":
                 addNewProduct();
                 break;
+
+            case "Quit":
+                connection.end();
+                break;
         }
     });
 }
@@ -78,7 +82,7 @@ function initialList() {
 function viewProducts() {
     connection.query("SELECT * FROM products", function(err, results) {
         if (err) throw err;
-        console.log("\nAll items currently for sale: \n")
+        console.log("\nAll items currently for sale: \n");
 
         //Displays all the items in a nice format, using a for loop
         for (var i = 0; i < results.length; i++) {
@@ -92,7 +96,25 @@ function viewProducts() {
 }
 
 function viewLowInventory() {
-    console.log("This shows all low inventory");
+    connection.query("SELECT * FROM products WHERE stock_quantity < 5", function(err, results) {
+        if (err) throw err;
+        console.log("All items with less than 5 units: \n");
+        if (results.length > 0) {
+            for (var i = 0; i < results.length; i++) {
+                console.log("\n======================\n");
+                console.log("Item " + results[i].item_id + ". " + results[i].product_name);
+                console.log("Price: " + results[i].price);
+                console.log("Number in Stock: " + results[i].stock_quantity);
+            }
+        } else {
+            console.log("\n======================");
+            console.log("  No items to display.");
+            console.log("======================\n");
+
+        }
+        continueToMenu();
+
+    });
 }
 
 function addInventory() {
