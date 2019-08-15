@@ -45,3 +45,15 @@ connection.connect(function(err) {
     initialList();
 });
 
+function initialList() {
+    inquirer.prompt([
+        {
+            name: "choices",
+            type: "list",
+            message: "What would you like to do?",
+            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
+        }
+    ]).then(function(response) {
+        console.log(response.choices);
+    })
+}
