@@ -104,11 +104,13 @@ function secondQuestion(results, itemIndex) {
         
         //Sets the remaining stock to equal the current stock minus the user's input
         var remainingStock = parseInt(results[itemIndex].stock_quantity) -  parseInt(secondResponse.quantityQuery);
-        var totalCost = parseFloat(results[itemIndex].price) * parseInt(secondResponse.quantityQuery);
+        //Sets the totalCost variable to equal price times the quantity selected. toFixed sets it to 2 decimal places
+        var totalCost = (parseFloat(results[itemIndex].price) * parseInt(secondResponse.quantityQuery)).toFixed(2);
 
         //Lets the user know how much is left afterwards, and also how much it cost overall
         console.log("Remaining stock after purchase: " + remainingStock + "\n");
         console.log("Total cost: $" + totalCost + "\n");
+        console.log("==========================\n")
 
         //Updating the database
         connection.query(
