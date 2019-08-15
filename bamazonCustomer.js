@@ -6,7 +6,7 @@ var connection = mysql.createConnection({
 
     host: "localhost",
 
-    port: 3306,
+    port: 3307,
 
     user: "root",
 
@@ -19,13 +19,10 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected as user ID " + connection.threadId + "\n");
-    start();
-});
-
-function start() {
     console.log("Welcome to \n=============\n Bamazon \n=============\n");
     displayItems();
-}
+});
+
 
 function displayItems() {
     connection.query("SELECT * FROM products", function(err, results) {
@@ -48,11 +45,11 @@ function firstQuestion(results) {
         {
             name: "selectID",
             type: "input",
-            message: "Please type the ID of the number you wish to purchase:",
+            message: "Please type the ID of the item you wish to purchase:",
             //Checks that if the input is not a number, it'll return the message. If not it continues.
             validate: function(value) {
-                var valid = isNaN(parseFloat(value));
-                if (valid === true) {
+                var invalid = isNaN(parseFloat(value));
+                if (invalid || parseInt(value) > results.length) {
                 return "Please enter a valid ID number";
                 }
             return true;
@@ -64,6 +61,49 @@ function firstQuestion(results) {
         var itemIndex = (response.selectID) -1;
         console.log("\nYou have selected item " + results[itemIndex].item_id + ": " + results[itemIndex].product_name);
         console.log("\nPrice: $" + results[itemIndex].price);
-        secondQuestion();
-    })
+        console.log("\nCurrent Stock: " + results[itemIndex].stock_quantity);
+        secondQuestion(results, itemIndex);
+    });
 }
+
+function secondQuestion(results, itemIndex) {
+    inquirer.prompt([
+
+        {
+            name: "quantityQuery",
+            type: "input",
+            message: "How many units would you like to buy?",
+            validate: function(value) {
+                var units = parseInt(value);
+                if (isNaN(units)) {
+                    return "Please enter a number";
+                } else if (units > results[itemIndex].stock_quantity) {
+                    return ("Oops! Looks like that's more than we have. Current stock: " + results[itemIndex].stock_quantity);
+                }
+                return true;
+            }
+        }
+
+    ]).then(function(secondResponse) {
+        console.log("Items purchased!");
+        //Sets the remaining stock to equal the current stock minus the user's input
+        var remainingStock = parseInt(results[itemIndex].stock_quantity) -  parseInt(secondResponse.quantityQuery);
+        //Lets the user know how much is left afterwards
+        console.log("Remaining stock after purchase: " + remainingStock);
+
+        //Updating the database
+        connection.query(
+            "UPDATE products SET stock_quantity = ? WHERE item_id = ?",
+            [
+                remainingStock,
+                results[itemIndex].item_id
+            ],
+            function(error) {
+                if (error) throw err;
+            }
+        );
+        
+        userContinue();
+
+        });
+    }
