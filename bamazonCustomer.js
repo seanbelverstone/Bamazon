@@ -59,10 +59,17 @@ function firstQuestion(results) {
     ]).then(function(response) {
         //This stores the user input into a variable, and then minuses 1 so it can translate to array positions
         var itemIndex = (response.selectID) -1;
-        console.log("\nYou have selected item " + results[itemIndex].item_id + ": " + results[itemIndex].product_name);
-        console.log("\nPrice: $" + results[itemIndex].price);
-        console.log("\nCurrent Stock: " + results[itemIndex].stock_quantity);
-        secondQuestion(results, itemIndex);
+
+        //If the user selects 0 as an option, it'll offer them the chance to exit
+        if (itemIndex <= 0) {
+            console.log("\nHmm. Looks like we don't have that item.\n")
+            userContinue();
+        } else {
+            console.log("\nYou have selected item " + results[itemIndex].item_id + ": " + results[itemIndex].product_name);
+            console.log("\nPrice: $" + results[itemIndex].price);
+            console.log("\nCurrent Stock: " + results[itemIndex].stock_quantity);
+            secondQuestion(results, itemIndex);
+        }
     });
 }
 
