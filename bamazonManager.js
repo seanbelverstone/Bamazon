@@ -110,16 +110,16 @@ function continueToMenu() {
         {
             name: "continue",
             type: "list",
-            message: "Would you like to continue?",
-            choices: ["Yes", "No"]
+            message: "\nWould you like to continue?",
+            choices: ["Back to Main Menu", "Quit"]
         }
     ]).then(function(menuResponse) {
         switch (menuResponse.continue) {
-            case "Yes":
+            case "Back to Main Menu":
                 initialList();
                 break;
 
-            case "No":
+            case "Quit":
                 connection.end();
                 break;
         }
