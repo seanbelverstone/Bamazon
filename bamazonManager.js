@@ -50,11 +50,11 @@ function initialList() {
         {
             name: "choices",
             type: "list",
-            message: "What would you like to do?",
+            message: "\nMain Menu\nWhat would you like to do?",
             choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
         }
     ]).then(function(response) {
-        switch (response) {
+        switch (response.choices) {
 
             case "View Products for Sale":
                 viewProducts();
@@ -70,6 +70,57 @@ function initialList() {
 
             case "Add New Product":
                 addNewProduct();
+                break;
+        }
+    });
+}
+
+function viewProducts() {
+    connection.query("SELECT * FROM products", function(err, results) {
+        if (err) throw err;
+        console.log("\nAll items currently for sale: \n")
+
+        //Displays all the items in a nice format, using a for loop
+        for (var i = 0; i < results.length; i++) {
+            console.log("\n======================\n");
+            console.log("Item " + results[i].item_id + ". " + results[i].product_name);
+            console.log("Price: " + results[i].price);
+            console.log("Number in Stock: " + results[i].stock_quantity);
+        }
+    continueToMenu();
+    });
+}
+
+function viewLowInventory() {
+    console.log("This shows all low inventory");
+}
+
+function addInventory() {
+    console.log("This allows the manager to add stock");
+}
+
+function addNewProduct() {
+    console.log("This allows the manager to add an entirely new product.");
+}
+
+
+//This is a function for going back to the main menu.
+function continueToMenu() {
+    inquirer.prompt([
+        {
+            name: "continue",
+            type: "list",
+            message: "Would you like to continue?",
+            choices: ["Yes", "No"]
+        }
+    ]).then(function(menuResponse) {
+        switch (menuResponse.continue) {
+            case "Yes":
+                initialList();
+                break;
+
+            case "No":
+                connection.end();
                 break;
         }
     })
