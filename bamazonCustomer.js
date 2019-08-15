@@ -85,11 +85,15 @@ function secondQuestion(results, itemIndex) {
         }
 
     ]).then(function(secondResponse) {
-        console.log("Items purchased!");
+        console.log("\n*==========================*")
+        console.log("       Items purchased!");
+        console.log("*==========================*\n")
+        
         //Sets the remaining stock to equal the current stock minus the user's input
         var remainingStock = parseInt(results[itemIndex].stock_quantity) -  parseInt(secondResponse.quantityQuery);
+       
         //Lets the user know how much is left afterwards
-        console.log("Remaining stock after purchase: " + remainingStock);
+        console.log("Remaining stock after purchase: " + remainingStock + "\n");
 
         //Updating the database
         connection.query(
@@ -105,5 +109,20 @@ function secondQuestion(results, itemIndex) {
         
         userContinue();
 
-        });
-    }
+    });
+}
+
+
+function userContinue() {
+    inquirer.prompt([
+        {
+            name: "continue",
+            type: "list",
+            message: "\nWould you like to purchase another item?",
+            choices: ["Yes", "No"]
+        }
+    ]).then(function(continueResponse) {
+        console.log(continueResponse.continue);
+        connection.end();
+    });
+}
