@@ -110,6 +110,7 @@ function viewLowInventory() {
     });
 }
 
+//ADD INVENTORY/STOCK SECTION
 function addStock() {
     inquirer.prompt([
         {
@@ -123,11 +124,14 @@ function addStock() {
             message: "Please enter the amount of stock you'd like to add:"
         }
     ]).then(function(addStockResponse) {
+        //Grabbing the item chosen by the user, using the id as a selector.
         connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
 
+            //Storing the new stock value as a variable, so we can update the database easier
             var newStockAmount = response[0].stock_quantity + parseInt(addStockResponse.stockAmount);
-            var query = "UPDATE products SET ? WHERE ?";
-            connection.query(query, 
+
+            //Query to update the database
+            connection.query("UPDATE products SET ? WHERE ?", 
                 [{
 
                     stock_quantity: newStockAmount
@@ -140,6 +144,7 @@ function addStock() {
                     if (err) throw err;
                 });
 
+            //Redisplaying the updated product
             connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
                 console.log("Stock updated! See below:\n");
                 console.log(response[0].item_id + ": " + response[0].product_name);
