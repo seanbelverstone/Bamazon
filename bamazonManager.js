@@ -82,10 +82,8 @@ function initialList() {
 function viewProducts() {
     connection.query("SELECT * FROM products", function(err, results) {
         if (err) throw err;
-        console.log("\nAll items currently for sale: \n");
 
-        //Displays all the items in a nice format, using a for loop
-        displayItems();
+        displayItems(results);
 
         continueToMenu();
     });
@@ -188,9 +186,14 @@ function addNewProduct() {
             stock_quantity: results.stockQuantity
         }, function(err, results) {
             if (err) throw err;
-            displayItems();
-            continueToMenu();
-    });
+            connection.query("SELECT * FROM products", function(err, results) {
+                if (err) throw err;
+
+                displayItems(results);
+                continueToMenu();
+            });
+
+        });
     });
 }
 
@@ -217,7 +220,9 @@ function continueToMenu() {
     })
 }
 
-function displayItems() {
+function displayItems(results) {
+    //Displays all the items in a nice format, using a for loop
+    console.log("\nAll items currently for sale: \n");
     for (var i = 0; i < results.length; i++) {
         console.log("\n======================\n");
         console.log("Item " + results[i].item_id + ". " + results[i].product_name);
