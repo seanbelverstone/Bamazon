@@ -126,11 +126,30 @@ function addStock() {
         connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
 
             var newStockAmount = response[0].stock_quantity + parseInt(addStockResponse.stockAmount);
-            console.log(newStockAmount);
-        }) 
+            var query = "UPDATE products SET ? WHERE ?";
+            connection.query(query, 
+                [{
+
+                    stock_quantity: newStockAmount
+
+                },{
+                    
+                    item_id: addStockResponse.id
+
+                }], function(err, results) {
+                    if (err) throw err;
+                });
+
+            connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
+                console.log("Stock updated! See below:\n");
+                console.log(response[0].item_id + ": " + response[0].product_name);
+                console.log("Updated stock level: " + response[0].stock_quantity);
+            });
+
+        });
 
 
-    })
+    });
 }
 
 function addNewProduct() {
