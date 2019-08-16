@@ -97,7 +97,7 @@ function viewLowInventory() {
         console.log("All items with less than 5 units: \n");
         if (results.length > 0) {
 
-            displayItems();
+            displayItems(results);
 
         } else {
             console.log("\n======================");
@@ -181,7 +181,7 @@ function addNewProduct() {
             message: "Enter the initial stock amount"
         }
     ]).then(function(results) {
-        connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES ?", {
+        connection.query("INSERT INTO products SET ?", {
             product_name: results.productName,
             department_name: results.departmentName,
             price: results.price,
