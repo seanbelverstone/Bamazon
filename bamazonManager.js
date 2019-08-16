@@ -65,7 +65,7 @@ function initialList() {
                 break;
 
             case "Add to Inventory":
-                addInventory();
+                addStock();
                 break;
 
             case "Add New Product":
@@ -110,8 +110,14 @@ function viewLowInventory() {
     });
 }
 
-function addInventory() {
- 
+function addStock() {
+    inquirer.prompt([
+        {
+            name: "id",
+            type: "input",
+            message: "Please enter the ID of the product you wish to add more stock for:"
+        }
+    ])
 }
 
 function addNewProduct() {
