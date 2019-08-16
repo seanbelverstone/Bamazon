@@ -116,8 +116,21 @@ function addStock() {
             name: "id",
             type: "input",
             message: "Please enter the ID of the product you wish to add more stock for:"
+        },
+        {
+            name: "stockAmount",
+            type: "input",
+            message: "Please enter the amount of stock you'd like to add:"
         }
-    ])
+    ]).then(function(addStockResponse) {
+        connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
+
+            var newStockAmount = response[0].stock_quantity + parseInt(addStockResponse.stockAmount);
+            console.log(newStockAmount);
+        }) 
+
+
+    })
 }
 
 function addNewProduct() {
