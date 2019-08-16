@@ -155,8 +155,9 @@ function addStock() {
     });
 }
 
+//ADD NEW PRODUCT FUNCTION
 function addNewProduct() {
-    console.log("This allows the manager to add an entirely new product");
+
     inquirer.prompt([
         {
             name: "productName",
@@ -180,13 +181,21 @@ function addNewProduct() {
         }
     ]).then(function(results) {
         connection.query("INSERT INTO products SET ?", {
+
+            //Adds the item entered by the user using the same database names
             product_name: results.productName,
             department_name: results.departmentName,
             price: results.price,
             stock_quantity: results.stockQuantity
+
         }, function(err, results) {
             if (err) throw err;
+            console.log("\n========================");
+            console.log("     Item added!")
+            console.log("========================\n");
+
             connection.query("SELECT * FROM products", function(err, results) {
+                //displays all the items again for the manager. Decided this rather than 
                 if (err) throw err;
 
                 displayItems(results);
