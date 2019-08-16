@@ -85,13 +85,9 @@ function viewProducts() {
         console.log("\nAll items currently for sale: \n");
 
         //Displays all the items in a nice format, using a for loop
-        for (var i = 0; i < results.length; i++) {
-            console.log("\n======================\n");
-            console.log("Item " + results[i].item_id + ". " + results[i].product_name);
-            console.log("Price: " + results[i].price);
-            console.log("Number in Stock: " + results[i].stock_quantity);
-        }
-    continueToMenu();
+        displayItems();
+
+        continueToMenu();
     });
 }
 
@@ -100,12 +96,9 @@ function viewLowInventory() {
         if (err) throw err;
         console.log("All items with less than 5 units: \n");
         if (results.length > 0) {
-            for (var i = 0; i < results.length; i++) {
-                console.log("\n======================\n");
-                console.log("Item " + results[i].item_id + ". " + results[i].product_name);
-                console.log("Price: " + results[i].price);
-                console.log("Number in Stock: " + results[i].stock_quantity);
-            }
+
+            displayItems();
+
         } else {
             console.log("\n======================");
             console.log("  No items to display.");
@@ -118,7 +111,39 @@ function viewLowInventory() {
 }
 
 function addInventory() {
-    console.log("This allows the manager to add stock");
+        inquirer.prompt([
+            {
+                name: "productName",
+                type: "input",
+                message: "Enter a product name",
+            },
+            {
+                name: "departmentName",
+                type: "input",
+                message: "Enter a department"
+            },
+            {
+                name: "price",
+                type: "input",
+                message: "Enter a price for item"
+            },
+            {
+                name: "stockQuantity",
+                type: "input",
+                message: "Enter the initial stock amount"
+            }
+        ]).then(function(results) {
+            connection.query("INSERT INTO products SET ?", {
+                product_name: results.productName,
+                department_name: results.departmentName,
+                price: results.price,
+                stock_quantity: results.stockQuantity
+            }, function(err, results) {
+                if (err) throw err;
+                displayItems();
+                continueToMenu();
+        });
+    });
 }
 
 function addNewProduct() {
@@ -146,4 +171,13 @@ function continueToMenu() {
                 break;
         }
     })
+}
+
+function displayItems() {
+    for (var i = 0; i < results.length; i++) {
+        console.log("\n======================\n");
+        console.log("Item " + results[i].item_id + ". " + results[i].product_name);
+        console.log("Price: " + results[i].price);
+        console.log("Number in Stock: " + results[i].stock_quantity);
+    }
 }
