@@ -195,7 +195,7 @@ function addNewProduct() {
             console.log("========================\n");
 
             connection.query("SELECT * FROM products", function(err, results) {
-                //displays all the items again for the manager. Decided this rather than 
+                //displays all the items again for the manager. Decided this rather than just show the item added as it'll always appear at the bottom anyway
                 if (err) throw err;
 
                 displayItems(results);
