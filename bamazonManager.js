@@ -82,10 +82,8 @@ function initialList() {
 function viewProducts() {
     connection.query("SELECT * FROM products", function(err, results) {
         if (err) throw err;
-        console.log("\nAll items currently for sale: \n");
 
-        //Displays all the items in a nice format, using a for loop
-        displayItems();
+        displayItems(results);
 
         continueToMenu();
     });
@@ -97,7 +95,7 @@ function viewLowInventory() {
         console.log("All items with less than 5 units: \n");
         if (results.length > 0) {
 
-            displayItems();
+            displayItems(results);
 
         } else {
             console.log("\n======================");
@@ -157,41 +155,55 @@ function addStock() {
     });
 }
 
+//ADD NEW PRODUCT FUNCTION
 function addNewProduct() {
-    console.log("This allows the manager to add an entirely new product");
-    // inquirer.prompt([
-    //     {
-    //         name: "productName",
-    //         type: "input",
-    //         message: "Enter a product name",
-    //     },
-    //     {
-    //         name: "departmentName",
-    //         type: "input",
-    //         message: "Enter a department"
-    //     },
-    //     {
-    //         name: "price",
-    //         type: "input",
-    //         message: "Enter a price for item"
-    //     },
-    //     {
-    //         name: "stockQuantity",
-    //         type: "input",
-    //         message: "Enter the initial stock amount"
-    //     }
-    // ]).then(function(results) {
-    //     connection.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES ?", {
-    //         product_name: results.productName,
-    //         department_name: results.departmentName,
-    //         price: results.price,
-    //         stock_quantity: results.stockQuantity
-    //     }, function(err, results) {
-    //         if (err) throw err;
-    //         displayItems();
-    //         continueToMenu();
-    // });
-    // });
+
+    inquirer.prompt([
+        {
+            name: "productName",
+            type: "input",
+            message: "Enter a product name",
+        },
+        {
+            name: "departmentName",
+            type: "input",
+            message: "Enter a department"
+        },
+        {
+            name: "price",
+            type: "input",
+            message: "Enter a price for item"
+        },
+        {
+            name: "stockQuantity",
+            type: "input",
+            message: "Enter the initial stock amount"
+        }
+    ]).then(function(results) {
+        connection.query("INSERT INTO products SET ?", {
+
+            //Adds the item entered by the user using the same database names
+            product_name: results.productName,
+            department_name: results.departmentName,
+            price: results.price,
+            stock_quantity: results.stockQuantity
+
+        }, function(err, results) {
+            if (err) throw err;
+            console.log("\n========================");
+            console.log("     Item added!")
+            console.log("========================\n");
+
+            connection.query("SELECT * FROM products", function(err, results) {
+                //displays all the items again for the manager. Decided this rather than just show the item added as it'll always appear at the bottom anyway
+                if (err) throw err;
+
+                displayItems(results);
+                continueToMenu();
+            });
+
+        });
+    });
 }
 
 
@@ -217,7 +229,9 @@ function continueToMenu() {
     })
 }
 
-function displayItems() {
+function displayItems(results) {
+    //Displays all the items in a nice format, using a for loop
+    console.log("\nAll items currently for sale: \n");
     for (var i = 0; i < results.length; i++) {
         console.log("\n======================\n");
         console.log("Item " + results[i].item_id + ". " + results[i].product_name);
