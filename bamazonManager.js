@@ -95,12 +95,27 @@ function addStock() {
         {
             name: "id",
             type: "input",
-            message: "Please enter the ID of the product you wish to add more stock for:"
+            message: "Please enter the ID of the product you wish to add more stock for:",
+            //Validation for ID number, same as found on bamazonCustomer.js
+            // validate: function(value) {
+            //     var invalid = isNaN(parseFloat(value));
+            //     if (invalid /* || parseInt(value) > results.length*/) {
+            //         return "Please enter a valid ID number";
+            //     }
+            // return true;
+            // }
         },
         {
             name: "stockAmount",
             type: "input",
-            message: "Please enter the amount of stock you'd like to add:"
+            message: "Please enter the amount of stock you'd like to add:",
+            validate: function(value) {
+                var invalid = isNaN(parseInt(value));
+                if (invalid) {
+                    return "Please enter a valid number";
+                }
+            return true;
+            }
         }
     ]).then(function(addStockResponse) {
         //Grabbing the item chosen by the user, using the id as a selector.
@@ -108,7 +123,6 @@ function addStock() {
 
             //Storing the new stock value as a variable, so we can update the database easier
             var newStockAmount = response[0].stock_quantity + parseInt(addStockResponse.stockAmount);
-
             //Query to update the database
             connection.query("UPDATE products SET ? WHERE ?", 
                 [{
@@ -128,6 +142,8 @@ function addStock() {
                 console.log("Stock updated! See below:\n");
                 console.log(response[0].item_id + ": " + response[0].product_name);
                 console.log("Updated stock level: " + response[0].stock_quantity);
+
+                continueToMenu();
             });
 
         });

@@ -53,7 +53,7 @@ function firstQuestion(results) {
             validate: function(value) {
                 var invalid = isNaN(parseFloat(value));
                 if (invalid || parseInt(value) > results.length) {
-                return "Please enter a valid ID number";
+                    return "Please enter a valid ID number";
                 }
             return true;
             }
