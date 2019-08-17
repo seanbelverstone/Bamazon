@@ -1,3 +1,8 @@
-# Bamazon
+#Bamazon
 
-A shopping app for customers and managers alike! Much like the famous shopping website with the same name, this allows a user to view current stock and purchase items.
+##Overview
+A shopping app for customers and managers alike! Much like the famous shopping website with the same name, this allows a user to view current stock and purchase items. It also allows a manager to enter the application to view the stock, view low stock, add more inventory and even add a new item.
+
+Having the option to buy stock as a customer, but also add more as a manager has many useful benefits, the main one being the fact that you can replenish stock that has been otherwise used up. If there was no manager page, eventually no-one would be able to buy anything.
+
+##Instructions
