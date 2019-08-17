@@ -1,26 +1,3 @@
-/*PSUEDOCODE
-==============
-
-This app lets the manager do many different processes.
-On load, the manager is greeted with a list that offers the following:
-
-    * View Products for Sale
-    
-    * View Low Inventory
-    
-    * Add to Inventory
-    
-    * Add New Product
-
-View Products for Sale shows all of the items from the list.
-View Low Inventory shows all items with a stock_quantity lower than 5.
-Add to Inventory lets the manager select an item, and increase the stock_quantity.
-Add New Product initiates a prompt where the manager can create a new item. It will ask for:
-    - Name (product_name)
-    - Department (department_name)
-    - Price (price)
-    - Stock Quantity (stock_quantity) */
-
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
@@ -45,6 +22,7 @@ connection.connect(function(err) {
     initialList();
 });
 
+//INITIAL LIST FOR MANAGER SELECTION
 function initialList() {
     inquirer.prompt([
         {
@@ -79,6 +57,7 @@ function initialList() {
     });
 }
 
+// Displays all the items currently in the database
 function viewProducts() {
     connection.query("SELECT * FROM products", function(err, results) {
         if (err) throw err;
@@ -89,6 +68,7 @@ function viewProducts() {
     });
 }
 
+//Shows all items where stock is lower than 5
 function viewLowInventory() {
     connection.query("SELECT * FROM products WHERE stock_quantity < 5", function(err, results) {
         if (err) throw err;
@@ -98,6 +78,7 @@ function viewLowInventory() {
             displayItems(results);
 
         } else {
+            //If there aren't any items that fit this criteria, this message will pop up.
             console.log("\n======================");
             console.log("  No items to display.");
             console.log("======================\n");
