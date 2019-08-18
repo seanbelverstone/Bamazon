@@ -33,7 +33,7 @@ function displayItems() {
         for (var i = 0; i < results.length; i++) {
             console.log("\n======================\n");
             console.log("Item " + results[i].item_id + ". " + results[i].product_name);
-            console.log("Price: " + results[i].price);
+            console.log("Price: $" + results[i].price);
             console.log("Number in Stock: " + results[i].stock_quantity);
         }
     firstQuestion(results);
@@ -64,7 +64,7 @@ function firstQuestion(results) {
         var itemIndex = (response.selectID) -1;
 
         //If the user selects 0 as an option, it'll offer them the chance to exit
-        if (itemIndex <= 0) {
+        if (itemIndex < 0) {
             console.log("\nHmm. Looks like we don't have that item.\n")
             userContinue();
         } else {

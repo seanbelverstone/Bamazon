@@ -91,65 +91,73 @@ function viewLowInventory() {
 
 //ADD INVENTORY/STOCK SECTION
 function addStock() {
-    inquirer.prompt([
-        {
-            name: "id",
-            type: "input",
-            message: "Please enter the ID of the product you wish to add more stock for:",
-            //Validation for ID number, same as found on bamazonCustomer.js
-            // validate: function(value) {
-            //     var invalid = isNaN(parseFloat(value));
-            //     if (invalid /* || parseInt(value) > results.length*/) {
-            //         return "Please enter a valid ID number";
-            //     }
-            // return true;
-            // }
-        },
-        {
-            name: "stockAmount",
-            type: "input",
-            message: "Please enter the amount of stock you'd like to add:",
-            validate: function(value) {
-                var invalid = isNaN(parseInt(value));
-                if (invalid) {
-                    return "Please enter a valid number";
+    connection.query("SELECT * FROM products", function(err, response) {
+        if (err) throw err;
+
+        inquirer.prompt([
+            {
+                name: "id",
+                type: "input",
+                message: "Please enter the ID of the product you wish to add more stock for:",
+                validate: function(value) {
+                    var invalid = isNaN(parseFloat(value));
+                    if (invalid || parseInt(value) > response.length) {
+                    return "Please enter a valid ID number";
+                    } else if (parseInt(value) == 0) {
+                    return "Please choose an ID number within the range";
+                    }
+                return true;
                 }
-            return true;
+            },
+            {
+                name: "stockAmount",
+                type: "input",
+                message: "Please enter the amount of stock you'd like to add:",
+                validate: function(value) {
+                    var units = parseInt(value);
+                    if (isNaN(units)) {
+                        return "Please enter a number";
+                    }
+                return true;
+                }
+
             }
-        }
-    ]).then(function(addStockResponse) {
-        //Grabbing the item chosen by the user, using the id as a selector.
-        connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
-
-            //Storing the new stock value as a variable, so we can update the database easier
-            var newStockAmount = response[0].stock_quantity + parseInt(addStockResponse.stockAmount);
-            //Query to update the database
-            connection.query("UPDATE products SET ? WHERE ?", 
-                [{
-
-                    stock_quantity: newStockAmount
-
-                },{
-                    
-                    item_id: addStockResponse.id
-
-                }], function(err, results) {
-                    if (err) throw err;
-                });
-
-            //Redisplaying the updated product
+        ]).then(function(addStockResponse) {
+            //Grabbing the item chosen by the user, using the id as a selector.
             connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
-                console.log("Stock updated! See below:\n");
-                console.log(response[0].item_id + ": " + response[0].product_name);
-                console.log("Updated stock level: " + response[0].stock_quantity);
+    
+                //Storing the new stock value as a variable, so we can update the database easier
+                var newStockAmount = response[0].stock_quantity + parseInt(addStockResponse.stockAmount);
+    
+                //Query to update the database
+                connection.query("UPDATE products SET ? WHERE ?", 
+                    [{
+    
+                        stock_quantity: newStockAmount
+    
+                    },{
+                        
+                        item_id: addStockResponse.id
+    
+                    }], function(err, results) {
+                        if (err) throw err;
+                    });
+    
+                //Redisplaying the updated product
+                connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
+                    console.log("Stock updated! See below:\n");
+                    console.log(response[0].item_id + ": " + response[0].product_name);
+                    console.log("Updated stock level: " + response[0].stock_quantity);
 
-                continueToMenu();
+                    continueToMenu();
+                });
+    
             });
-
+    
+    
         });
+    }) 
 
-
-    });
 }
 
 //ADD NEW PRODUCT FUNCTION
@@ -159,7 +167,7 @@ function addNewProduct() {
         {
             name: "productName",
             type: "input",
-            message: "Enter a product name",
+            message: "Enter a product name"
         },
         {
             name: "departmentName",
@@ -169,12 +177,28 @@ function addNewProduct() {
         {
             name: "price",
             type: "input",
-            message: "Enter a price for item"
+            message: "Enter a price for item",
+            validate: function(value) {
+                var price = parseFloat(value);
+                var invalid = isNaN(price);
+                if (invalid) {
+                    return "Please enter a valid price"
+                }
+            return true;
+            }
         },
         {
             name: "stockQuantity",
             type: "input",
-            message: "Enter the initial stock amount"
+            message: "Enter the initial stock amount",
+            validate: function(value) {
+                var units = parseInt(value);
+                var invalid = isNaN(units);
+                if (invalid) {
+                    return "Please enter a valid number of units";
+                }
+            return true;
+            }
         }
     ]).then(function(results) {
         connection.query("INSERT INTO products SET ?", {
