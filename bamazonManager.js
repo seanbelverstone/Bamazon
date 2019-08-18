@@ -101,8 +101,10 @@ function addStock() {
                 message: "Please enter the ID of the product you wish to add more stock for:",
                 validate: function(value) {
                     var invalid = isNaN(parseFloat(value));
-                    if (invalid || parseInt(value) > response.length +1 || parseInt(value == 0)) {
+                    if (invalid || parseInt(value) > response.length) {
                     return "Please enter a valid ID number";
+                    } else if (parseInt(value) == 0) {
+                    return "Please choose an ID number within the range";
                     }
                 return true;
                 }
@@ -116,7 +118,7 @@ function addStock() {
                     if (isNaN(units)) {
                         return "Please enter a number";
                     }
-                    return true;
+                return true;
                 }
 
             }
@@ -165,7 +167,7 @@ function addNewProduct() {
         {
             name: "productName",
             type: "input",
-            message: "Enter a product name",
+            message: "Enter a product name"
         },
         {
             name: "departmentName",
@@ -175,12 +177,28 @@ function addNewProduct() {
         {
             name: "price",
             type: "input",
-            message: "Enter a price for item"
+            message: "Enter a price for item",
+            validate: function(value) {
+                var price = parseFloat(value);
+                var invalid = isNaN(price);
+                if (invalid) {
+                    return "Please enter a valid price"
+                }
+            return true;
+            }
         },
         {
             name: "stockQuantity",
             type: "input",
-            message: "Enter the initial stock amount"
+            message: "Enter the initial stock amount",
+            validate: function(value) {
+                var units = parseInt(value);
+                var invalid = isNaN(units);
+                if (invalid) {
+                    return "Please enter a valid number of units";
+                }
+            return true;
+            }
         }
     ]).then(function(results) {
         connection.query("INSERT INTO products SET ?", {
