@@ -57,3 +57,19 @@ When back at the main menu, you're greeted with the same list of options as befo
 
 If the manager is met with the second screen, we can add more inventory to this item! After going back to the main menu, we select the *Add to Inventory* option:
 
+[Adding Stock](images/bmanageraddstock.jpg)
+
+This also has validation within the prompt, preventing user errors.
+
+Finally, the last option is *Add New Product*. Also featuring heavy validation rules, this allows a user to input an item, the department it belongs in, it's price and also the initial starting stock. Once the item is added, it displays the entire table again. I decided to do it this way, rather than just show the final item, as the last inputted value always appends to the bottom anyway. Plus this gives the manager an extra chance to look over the entire stock. Here's a screenshot of that in action:
+
+[Adding a New Item](images/bmanageradditem.jpg)
+
+[Table With New Item at Bottom](images/bmanagerfinaldisplay.jpg)
+
+Here's a video of the Manager application in action:
+
+[Screencastify BamazonManager Video](https://drive.google.com/file/d/1-rkrHQgvEdVJrAQGnjA9raD2vHU61uVV/view)
+
+
+And that's it! I had a great time with this project and hope you enjoy it too.
