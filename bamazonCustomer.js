@@ -64,7 +64,7 @@ function firstQuestion(results) {
         var itemIndex = (response.selectID) -1;
 
         //If the user selects 0 as an option, it'll offer them the chance to exit
-        if (itemIndex <= 0) {
+        if (itemIndex < 0) {
             console.log("\nHmm. Looks like we don't have that item.\n")
             userContinue();
         } else {
