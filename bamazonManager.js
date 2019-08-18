@@ -91,49 +91,71 @@ function viewLowInventory() {
 
 //ADD INVENTORY/STOCK SECTION
 function addStock() {
-    inquirer.prompt([
-        {
-            name: "id",
-            type: "input",
-            message: "Please enter the ID of the product you wish to add more stock for:"
-        },
-        {
-            name: "stockAmount",
-            type: "input",
-            message: "Please enter the amount of stock you'd like to add:"
-        }
-    ]).then(function(addStockResponse) {
-        //Grabbing the item chosen by the user, using the id as a selector.
-        connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
+    connection.query("SELECT * FROM products", function(err, response) {
+        if (err) throw err;
 
-            //Storing the new stock value as a variable, so we can update the database easier
-            var newStockAmount = response[0].stock_quantity + parseInt(addStockResponse.stockAmount);
+        inquirer.prompt([
+            {
+                name: "id",
+                type: "input",
+                message: "Please enter the ID of the product you wish to add more stock for:",
+                validate: function(value) {
+                    var invalid = isNaN(parseFloat(value));
+                    if (invalid || parseInt(value) > response.length +1 || parseInt(value == 0)) {
+                    return "Please enter a valid ID number";
+                    }
+                return true;
+                }
+            },
+            {
+                name: "stockAmount",
+                type: "input",
+                message: "Please enter the amount of stock you'd like to add:",
+                validate: function(value) {
+                    var units = parseInt(value);
+                    if (isNaN(units)) {
+                        return "Please enter a number";
+                    }
+                    return true;
+                }
 
-            //Query to update the database
-            connection.query("UPDATE products SET ? WHERE ?", 
-                [{
-
-                    stock_quantity: newStockAmount
-
-                },{
-                    
-                    item_id: addStockResponse.id
-
-                }], function(err, results) {
-                    if (err) throw err;
-                });
-
-            //Redisplaying the updated product
+            }
+        ]).then(function(addStockResponse) {
+            //Grabbing the item chosen by the user, using the id as a selector.
             connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
-                console.log("Stock updated! See below:\n");
-                console.log(response[0].item_id + ": " + response[0].product_name);
-                console.log("Updated stock level: " + response[0].stock_quantity);
+    
+                //Storing the new stock value as a variable, so we can update the database easier
+                var newStockAmount = response[0].stock_quantity + parseInt(addStockResponse.stockAmount);
+    
+                //Query to update the database
+                connection.query("UPDATE products SET ? WHERE ?", 
+                    [{
+    
+                        stock_quantity: newStockAmount
+    
+                    },{
+                        
+                        item_id: addStockResponse.id
+    
+                    }], function(err, results) {
+                        if (err) throw err;
+                    });
+    
+                //Redisplaying the updated product
+                connection.query("SELECT * FROM products WHERE ?", {item_id: addStockResponse.id}, function(err, response) {
+                    console.log("Stock updated! See below:\n");
+                    console.log(response[0].item_id + ": " + response[0].product_name);
+                    console.log("Updated stock level: " + response[0].stock_quantity);
+
+                    continueToMenu();
+                });
+    
             });
-
+    
+    
         });
+    }) 
 
-
-    });
 }
 
 //ADD NEW PRODUCT FUNCTION
