@@ -33,7 +33,7 @@ function displayItems() {
         for (var i = 0; i < results.length; i++) {
             console.log("\n======================\n");
             console.log("Item " + results[i].item_id + ". " + results[i].product_name);
-            console.log("Price: " + results[i].price);
+            console.log("Price: $" + results[i].price);
             console.log("Number in Stock: " + results[i].stock_quantity);
         }
     firstQuestion(results);
