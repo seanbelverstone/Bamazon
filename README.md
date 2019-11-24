@@ -1,14 +1,14 @@
-#Bamazon
+# Bamazon
 
-##Overview
+## Overview
 A shopping app for customers and managers alike! Much like the famous shopping website with the same name, this allows a user to view current stock and purchase items. It also allows a manager to enter the application to view the stock, view low stock, add more inventory and even add a new item.
 
 Having the option to buy stock as a customer, but also add more as a manager has many useful benefits, the main one being the fact that you can replenish stock that has been otherwise used up. If there was no manager page, eventually no-one would be able to buy anything.
 
 
-##Instructions and Walkthrough
+## Instructions and Walkthrough
 
-###Bamazon Customer View
+### Bamazon Customer View
 Make sure before loading either of these files, that you install all of the dependencies using **npm i** on node.
 Once the dependencies are installed, run bamazonCustomer.js in the terminal.
 
@@ -33,7 +33,7 @@ Here is a video of the app in action:
 
 [Screencastify BamazonCustomer Video](https://drive.google.com/file/d/1VzKJ8Cy6wM6HCCcyXUKEAEXtzxtzEPkw/view)
 
-###Bamazon Manager View
+### Bamazon Manager View
 
 Remember again, once using this app - install the dependencies with **npm i** in order for the the application to work.
 Once this has all been done, you'll see the following screen:
